@@ -25,7 +25,7 @@ responsible for determining the valid moves at the current state. It will also k
 # if both players can't checkmate, the game is a draw.
 # if a pattern is repeated 3 times, the game is a draw.
 
-# TODO: Add in move log
+# TODO: Add undo move
 # TODO: Add in piece highlighting and move suggestions
 # TODO: Add in AI
 
@@ -50,15 +50,28 @@ class GameState:
         self.whiteToMove = True
         self.moveLog = []
 
-    def make_move(self, move):
+    def make_move(self, move):  # TODO: add in castling, en passant, pawn promotion.
         self.board[move.start_row][move.start_col] = "--"
         self.board[move.end_row][move.end_col] = move.piece_moved
         self.moveLog.append(move)  # Add move to move log, so we can undo it later if needed.
         self.whiteToMove = not self.whiteToMove  # Switch to other player's turn.
 
 
+    def switch_turn(gs):
+        gs.whiteToMove = not gs.whiteToMove
+
+    def undo_move(self):
+        """
+        Undo the last move.
+        """
+        if len(self.moveLog) > 0:
+            self.board[self.moveLog[-1].start_row][self.moveLog[-1].start_col] = self.moveLog[-1].piece_moved
+            self.board[self.moveLog[-1].end_row][self.moveLog[-1].end_col] = self.moveLog[-1].piece_captured
+            move = self.moveLog.pop()
+            GameState.switch_turn(self)
+
 # 2 ways to visualize the pieces moves : chess notation method or "2 strings method" (I will specify later.)
-class Move:
+class Move:  # TODO: add in castling, en passant, pawn promotion and maybe check, checkmate, stalemate and draw.
     # maps key to values.
     # key : value
     ranks_to_row = {"1": 7, "2": 6, "3": 5, "4": 4, "5": 3, "6": 2, "7": 1, "8": 0} # i'm happy you understand this my friend Github Copilot :D
