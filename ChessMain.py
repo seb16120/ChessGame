@@ -23,7 +23,7 @@ The main driver file. it will be responsible for handling user input and display
 # if both players can't checkmate, the game is a draw.
 # if a pattern is repeated 3 times, the game is a draw.
 
-# TODO: Add in move piece function  # almost done
+
 # TODO: Add in game over screen
 # TODO: Add in game reset
 # TODO: Add in game save and load
@@ -50,9 +50,6 @@ def load_images():
     #Note: We can access an image by saying 'IMAGES['wp']'
 
 
-
-
-
 def main():
     """
     The main driver for our code. This will handle user input and updating the graphics
@@ -62,14 +59,18 @@ def main():
     clock = p.time.Clock()
     screen.fill(p.Color("White"))
     gs = ChessEngine.GameState()
+    validMoves = gs.getValidMoves()
+    moveMade = False  # flag to indicate if a move was made
     load_images()  # only do this once, before the while loop
     running = True
     sq_selected = (None, None) # keep track of the last square the user clicked on. (row, col)
     player_clicks = []  # keep track of the player's clicks. (two tuples: [sq_(previously)_selected, sq_selected])
+
     while running:
         for e in p.event.get():
             if e.type == p.QUIT:
                 running = False
+            # mouse handler
             elif e.type == p.MOUSEBUTTONDOWN:
                 # get the mouse position:
                 mouse_pos = p.mouse.get_pos()
@@ -89,10 +90,27 @@ def main():
                 if len(player_clicks) == 2:
                     move = ChessEngine.Move(player_clicks[0], player_clicks[1], gs.board)
                     print(move.get_chess_notation())
-                    gs.make_move(move)
+                    if move in validMoves:
+                        gs.make_move(move)
+                        moveMade = True
                     sq_selected = (None, None)  # reset the selected square
                     player_clicks = []  # reset the player_clicks list
-
+            # key handler
+            elif e.type == p.KEYDOWN:
+                if e.key == p.K_z:
+                    gs.undo_move()
+                    moveMade = True
+                if e.key == p.K_r:
+                    resetGame(screen, gs)
+                if e.key == p.K_s:
+                    saveGame(gs)
+                if e.key == p.K_l:
+                    loadGame(gs)
+                if e.key == p.K_q:
+                    running = False
+        if moveMade:
+            validMoves = gs.getValidMoves()
+            moveMade = False
         draw_game_state(screen, gs)
         clock.tick(MAX_FPS)
         p.display.flip()
@@ -146,29 +164,19 @@ def movePiece(gs, fromRow, fromCol, toRow, toCol):
 def drawMoveSuggestions(screen, gs, fromRow, fromCol):
     pass
 
-
 def getValidMoves(gs, fromRow, fromCol):
-    pass
-
-# TODO: Add in game over screen
-def gameOver(screen, gs):
     pass
 
 # TODO: Add in game reset
 def resetGame(screen, gs):
-    pass
+    NotImplemented
 
 # TODO: Add in game save and load
 def saveGame(gs):
-    pass
+    NotImplemented
 
 def loadGame(gs):
-    pass
-
-# TODO: Add in move log
-def updateMoveLog(screen, gs, fromRow, fromCol, toRow, toCol):
-    pass
-
+    NotImplemented
 
 
 if __name__ == "__main__":
