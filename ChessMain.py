@@ -24,12 +24,17 @@ The main driver file. it will be responsible for handling user input and display
 # if a pattern is repeated 3 times, the game is a draw.
 
 
+
+
+
 # TODO: Add in game over screen
 # TODO: Add in game reset
 # TODO: Add in game save and load
 
 import pygame as p
 import ChessEngine
+# import memory ram data for shutdown the game if there is a memory leak:
+#import memomy_ram
 
 
 WIDTH = HEIGHT = 512
@@ -109,7 +114,7 @@ def main():
                 if e.key == p.K_q:
                     running = False
         if moveMade:
-            validMoves = gs.getValidMoves()
+            #validMoves = gs.getValidMoves()  # TODO: switch on
             moveMade = False
         draw_game_state(screen, gs)
         clock.tick(MAX_FPS)
